@@ -101,6 +101,137 @@ int main() {
 | \*\*main 함수(외부)\*\*에서 `a.a` 사용 | ❌ 불가     | 외부는 `protected` 멤버 접근 불가 |
 
 
+## 캡슐화
+
+### ✅ 개념 요약
+
+  데이터와 이를 처리하는 함수를 하나의 클래스로 묶고, 내부 세부 구현은 감추는 것
+### ✅ 핵심: "정보 은닉"
+
+```cpp
+class BankAccount {
+private:
+    double balance; // 외부에 숨김
+
+public:
+    void deposit(double amount) {
+        if (amount > 0) balance += amount;
+    }
+
+    void withdraw(double amount) {
+        if (amount <= balance) balance -= amount;
+    }
+
+    double getBalance() const {
+        return balance;
+    }
+};
+```
+
+### 🔍 깊은 의미
+
++ `balance`는 **직접 접근 불가** -> 잘못된 상태(음수 잔액 등)를 차단
+
++ 인터페이스 (`deposit`, `withdraw`)를 통해서만 상태 변화 가능
+
++ 즉, **객체의 일관성과 무결성 보장**
+
+### 🎯 실제 설계에서의 힘
+
++ 내부 구현이 바뀌어도, 외부는 **함수만 알고 있으면 사용 가능** -> 유연한 유지 보수
+
++ API 제공 시, **클래스 사용자에게 최소한의 정보만 공개** 가능
+
++ **보안**, **버그 방지**, **코드 관리**의 핵심 축
+
+### 🧩 왜 필요한가? (캡슐화의 목적)
+
+| 목적       | 설명                              |
+| -------- | ------------------------------- |
+| ✅ 정보 은닉  | 내부 구현을 숨겨 잘못된 접근이나 오용을 막음       |
+| ✅ 일관성 유지 | 객체의 상태가 항상 유효하도록 제한함            |
+| ✅ 변경에 유연 | 내부 구현을 바꿔도 외부는 영향 없음 (인터페이스 고정) |
+| ✅ 책임 분리  | “무엇을 할 수 있는가”와 “어떻게 할 것인가”를 분리  |
+
+### 4. 예시로 이해하기
+
+**❌ 캡슐화 없이 작성한 코드**
+```cpp
+class User {
+public:
+    std::string name;
+    int age;
+};
+
+int main() {
+    User u;
+    u.age = -999; // ❌ 잘못된 나이
+}
+```
+문제점: 외부에서 객체의 상태를 무제한으로 조작 가능 → 데이터 무결성 붕괴
+
+**✅ 캡슐화 적용**
+
+```cpp
+class User {
+private:
+    std::string name;
+    int age;
+
+public:
+    void setAge(int a) {
+        if (a >= 0 && a <= 150)
+            age = a;
+    }
+
+    int getAge() const {
+        return age;
+    }
+};
+```
+
++ 외부는 오직 setAge() / getAge()로만 접근 가능
+
++ 객체가 스스로 “**내 상태를 보호하고, 유효성 검사도 내가 한다**” 는 구조
+
+**🛠️ 내부 구현 변경의 유연성**
+캡슐화가 잘 되어 있으면, 내부 구조를 바꾸더라도 외부 인터페이스는 그대로 유지할 수 있다.
+
+```cpp
+// 바뀌기 전
+class Point {
+private:
+    int x, y;
+public:
+    void setX(int val) { x = val; }
+    int getX() const { return x; }
+};
+```
+``cpp
+// 내부 구현만 바꿈
+class Point {
+private:
+    std::pair<int, int> coords;
+public:
+    void setX(int val) { coords.first = val; }
+    int getX() const { return coords.first; }
+};
+```
+
++ 내부 구조는 바뀌었지만, 외부에서 쓰는 방식은 동일
+
+  -> 코드 변경의 영향도를 줄이고, 유지보수가 쉬워짐
+
+### 🧠 객체지향 설계 원칙과의 연결
+
+**✅ SRP (단일 책임 원칙)**
+
++ 객체는 자신의 **상태를 스스로 관리**해야 하며,
+
++ 캡슐화는 그 책임을 객체 내부로 국한시킴
+
+**✅ OCP (개방-폐쇄 원칙)**
+
 ## 상속
 
 **상속은 기존 클래스(부모, 또는 기반 클래스)의 속성과 기능을 새로운 클래스(자식, 또는 파생클래스)가 물려받는 것이다.
@@ -374,4 +505,4 @@ Parent destructor
 
 ## 다형성
 
-## 캡슐화
+
